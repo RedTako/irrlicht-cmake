@@ -3,7 +3,10 @@ cmake_minimum_required(VERSION 3.16)
 
 # irrlicht dependencies
 add_library(lzma irrlicht/source/Irrlicht/lzma/LzmaDec.c)
-target_include_directories(lzma PUBLIC "irrlicht/source/Irrlicht/lzma")
+target_include_directories(lzma PUBLIC 
+    "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/irrlicht/source/Irrlicht/lzma>"
+    "$<INSTALL_INTERFACE:include>"
+)
 
 add_subdirectory(dependencies/zlib)
 add_subdirectory(dependencies/libpng)
@@ -20,7 +23,10 @@ add_library(bzip2
     dependencies/bzip2-1.0.6/bzip2recover.c
 )
 target_compile_definitions(bzip2 PRIVATE "_FILE_OFFSET_BITS=64")
-target_include_directories(bzip2 PUBLIC "dependencies/bzip2-1.0.6")
+target_include_directories(bzip2 PUBLIC 
+    "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/dependencies/bzip2-1.0.6>"
+    "$<INSTALL_INTERFACE:include>"
+)
 
 add_library(aesGladman
     irrlicht/source/Irrlicht/aesGladman/aescrypt.cpp
@@ -33,8 +39,12 @@ add_library(aesGladman
     irrlicht/source/Irrlicht/aesGladman/sha1.cpp
     irrlicht/source/Irrlicht/aesGladman/sha2.cpp
 )
-target_include_directories(aesGladman PUBLIC "irrlicht/source/Irrlicht/aesGladman")
-target_include_directories(aesGladman PRIVATE "irrlicht/include")
+target_include_directories(aesGladman PUBLIC 
+    "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/irrlicht/source/Irrlicht/aesGladman>"
+    "$<INSTALL_INTERFACE:include>"
+
+    PRIVATE "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/irrlicht/include>"
+)
 
 #end dependencies
 
@@ -262,9 +272,11 @@ add_library(irrlicht
     irrlicht/source/Irrlicht/os.cpp
     irrlicht/source/Irrlicht/utf8.cpp
 )
-target_include_directories(irrlicht 
-    PUBLIC "irrlicht/source/Irrlicht"
-    PUBLIC "irrlicht/include"
+target_include_directories(irrlicht PUBLIC 
+    "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/irrlicht/source/Irrlicht>"
+    "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/irrlicht/include>"
+
+    "$<INSTALL_INTERFACE:include>"
 )
 #target_compile_definitions(irrlicht PRIVATE "PNG_THREAD_UNSAFE_OK" "PNG_NO_MMX_CODE" "PNG_NO_MNG_FEATURES")
 
@@ -276,5 +288,17 @@ endif()
 
 target_link_libraries(irrlicht bzip2 lzma ${ZLIB_LIBRARY} png jpeg aesGladman)
 
+include(GNUInstallDirs)
+install(TARGETS irrlicht bzip2 lzma ${ZLIB_LIBRARY} png jpeg aesGladman
+    EXPORT irrlicht
+)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/irrlicht/include DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(EXPORT irrlicht 
+    FILE irrlicht-config.cmake
+    NAMESPACE irrlicht::
+    DESTINATION lib/cmake
+)
 
-
+#export(TARGETS irrlicht bzip2 lzma ${ZLIB_LIBRARY} png jpeg aesGladman
+    #NAMESPACE irrlicht FILE irrlicht-config.cmake)
+#export(EXPORT irrlicht NAMESPACE irrlicht FILE irrlicht-config.cmake)
