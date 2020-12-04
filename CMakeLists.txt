@@ -48,7 +48,7 @@ target_include_directories(aesGladman PUBLIC
 
 #end dependencies
 
-add_library(irrlicht
+add_library(Irrlicht
     irrlicht/source/Irrlicht/C3DSMeshFileLoader.cpp
     irrlicht/source/Irrlicht/CAnimatedMeshHalfLife.cpp
     irrlicht/source/Irrlicht/CAnimatedMeshMD2.cpp
@@ -272,7 +272,7 @@ add_library(irrlicht
     irrlicht/source/Irrlicht/os.cpp
     irrlicht/source/Irrlicht/utf8.cpp
 )
-target_include_directories(irrlicht PUBLIC 
+target_include_directories(Irrlicht PUBLIC 
     "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/irrlicht/source/Irrlicht>"
     "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/irrlicht/include>"
 
@@ -286,16 +286,50 @@ else()
     set(ZLIB_LIBRARY zlibstatic)
 endif()
 
-target_link_libraries(irrlicht bzip2 lzma ${ZLIB_LIBRARY} png jpeg aesGladman)
+# add opengl dependency
+set(OpenGL_GL_PREFERENCE GLVND)
+find_package(OpenGL REQUIRED)
+set(OpenGL_Targets )
+
+if(OPENGL_opengl_LIBRARY) #GLVND GL
+    list(APPEND OpenGL_Targets OpenGL::OpenGL)
+    if(OpenGL_GLX_FOUND)
+         list(APPEND OpenGL_Targets OpenGL::GLX Xxf86vm)
+    endif()
+else() #Legacy OpenGL
+    list(APPEND OpenGL_Targets OpenGL::GL)
+endif()
+
+if(OpenGL_GLU_FOUND)
+    list(APPEND OpenGL_Targets OpenGL::GLU)
+endif()
+# end opengl
+
+target_link_libraries(Irrlicht 
+    bzip2 lzma ${ZLIB_LIBRARY} png jpeg aesGladman ${OpenGL_Targets}
+) 
+
+# install section
 
 include(GNUInstallDirs)
-install(TARGETS irrlicht bzip2 lzma ${ZLIB_LIBRARY} png jpeg aesGladman
-    EXPORT irrlicht
+include(CMakePackageConfigHelpers)
+
+install(TARGETS Irrlicht bzip2 lzma ${ZLIB_LIBRARY} png jpeg aesGladman
+    EXPORT Irrlicht
 )
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/irrlicht/include DESTINATION ${CMAKE_INSTALL_PREFIX})
-install(EXPORT irrlicht 
-    FILE irrlicht-config.cmake
-    NAMESPACE irrlicht::
+install(EXPORT Irrlicht 
+    FILE IrrlichtTargets.cmake
+    NAMESPACE Irrlicht::
+    DESTINATION lib/cmake
+)
+
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/IrrlichtConfig.cmake
+    INSTALL_DESTINATION lib/cmake
+)
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/IrrlichtConfig.cmake
     DESTINATION lib/cmake
 )
 

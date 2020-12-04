@@ -1,0 +1,9 @@
+@PACKAGE_INIT@
+
+set(OpenGL_GL_PREFERENCE GLVND)
+include(CMakeFindDependencyMacro)
+find_dependency(OpenGL)
+
+include(${CMAKE_CURRENT_LIST_DIR}/IrrlichtTargets.cmake)
+
+check_required_components(Irrlicht)
