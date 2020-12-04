@@ -1,8 +1,9 @@
 # irrlicht-cmake
 
-cmake file to build irrlicht and its dependencies.
+Creates a cmake target **Irrlicht::Irrlicht**
 
-set **BUILD_SHARED_LIBS** on or off to build shared or static libraries respectively.
+Cmake file to build irrlicht and its dependencies.  
+Set **BUILD_SHARED_LIBS** on or off to build shared or static libraries respectively.
 
 ## Dependencies
 - [irrlicht](https://github.com/zaki/irrlicht)
