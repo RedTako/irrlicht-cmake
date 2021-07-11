@@ -78,6 +78,7 @@ target_include_directories(Irrlicht SYSTEM PUBLIC
     "${srcdir}/Irrlicht"
     "${incdir}"
 )
+add_library(Irrlicht::Irrlicht ALIAS Irrlicht)
 #target_compile_definitions(irrlicht PRIVATE "PNG_THREAD_UNSAFE_OK" "PNG_NO_MMX_CODE" "PNG_NO_MNG_FEATURES")
 
 if(BUILD_SHARED_LIBS)
