@@ -1,0 +1,32 @@
+439,441c439,441
+< 		xmlChar<T>() {}
+< 		xmlChar<T>(char in) : c(static_cast<T>(in)) {}
+< 		xmlChar<T>(wchar_t in) : c(static_cast<T>(in)) {}
+---
+> 		xmlChar() {}
+> 		xmlChar(char in) : c(static_cast<T>(in)) {}
+> 		xmlChar(wchar_t in) : c(static_cast<T>(in)) {}
+445,448c445,448
+< 		xmlChar<T>(unsigned char in) : c(static_cast<T>(in)) {}
+< 		xmlChar<T>(unsigned short in) : c(static_cast<T>(in)) {}
+< 		xmlChar<T>(unsigned int in) : c(static_cast<T>(in)) {}
+< 		xmlChar<T>(unsigned long in) : c(static_cast<T>(in)) {}
+---
+> 		xmlChar(unsigned char in) : c(static_cast<T>(in)) {}
+> 		xmlChar(unsigned short in) : c(static_cast<T>(in)) {}
+> 		xmlChar(unsigned int in) : c(static_cast<T>(in)) {}
+> 		xmlChar(unsigned long in) : c(static_cast<T>(in)) {}
+450c450
+< 		explicit xmlChar<T>(unsigned char in) : c(static_cast<T>(in)) {}
+---
+> 		explicit xmlChar(unsigned char in) : c(static_cast<T>(in)) {}
+453c453
+< 		explicit xmlChar<T>(unsigned short in) : c(static_cast<T>(in)) {}
+---
+> 		explicit xmlChar(unsigned short in) : c(static_cast<T>(in)) {}
+455,456c455,456
+< 		explicit xmlChar<T>(unsigned int in) : c(static_cast<T>(in)) {}
+< 		explicit xmlChar<T>(unsigned long in) : c(static_cast<T>(in)) {}
+---
+> 		explicit xmlChar(unsigned int in) : c(static_cast<T>(in)) {}
+> 		explicit xmlChar(unsigned long in) : c(static_cast<T>(in)) {}

@@ -1,16 +1,27 @@
 project(irrlicht LANGUAGES C CXX)
 cmake_minimum_required(VERSION 3.16)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 set(depdir ${CMAKE_CURRENT_LIST_DIR}/dependencies)
 set(srcdir ${PROJECT_BINARY_DIR}/irrlicht/source)
 set(incdir ${PROJECT_BINARY_DIR}/irrlicht/include)
 
 find_package(Subversion REQUIRED)
+find_package(Patch REQUIRED)
 
 execute_process(COMMAND 
     ${Subversion_SVN_EXECUTABLE} checkout 
     "https://svn.code.sf.net/p/irrlicht/code/trunk"
     "${PROJECT_BINARY_DIR}/irrlicht"
+)
+
+#patch irrXML.h
+#fixes build error
+execute_process(COMMAND
+    ${Patch_EXECUTABLE} -N
+    "${incdir}/irrXML.h"
+    "${CMAKE_CURRENT_LIST_DIR}/irrXML.h.patch"
 )
 
 add_custom_target(update_repo COMMAND ${Subversion_SVN_EXECUTABLE} update "${PROJECT_BINARY_DIR}/irrlicht")
@@ -63,7 +74,7 @@ file(GLOB irrlicht_sources CONFIGURE_DEPENDS
 )
 
 add_library(Irrlicht ${irrlicht_sources})
-target_include_directories(Irrlicht PUBLIC 
+target_include_directories(Irrlicht SYSTEM PUBLIC 
     "${srcdir}/Irrlicht"
     "${incdir}"
 )
